@@ -24,6 +24,3 @@ release
 *.njsproj
 *.sln
 *.sw?
-
-# use yarn, windows use npm only
-package-lock.json
