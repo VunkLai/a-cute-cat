@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, Menu, Tray } from "electron";
 
 import path from "path";
 
@@ -9,19 +9,53 @@ const BASE_PATH = {
 
 const createWindow = () => {
   const window = new BrowserWindow({
-    // icon: path.join(BASE_PATH.public, "vite.svg"),
-    title: "Cat",
+    width: 365,
+    height: 365,
+    webPreferences: {
+      preload: "preload.js",
+    },
+    frame: false,
+    transparent: true,
+    autoHideMenuBar: true,
+    show: true,
   });
 
   if (app.isPackaged) {
-    window.loadFile(path.join(BASE_PATH.dist, "index.htm"));
+    window.loadFile(path.join(BASE_PATH.dist, "index.html"));
   } else {
     window.loadURL(process.env["VITE_DEV_SERVER_URL"]);
   }
+
+  return window;
+};
+
+const createTray = (window) => {
+  const trayIcon = path.join(BASE_PATH.public, "cat_icon.png");
+  const tray = new Tray(trayIcon);
+  tray.setToolTip("this is a small cat");
+  const contextMenu = Menu.buildFromTemplate([
+    { label: "show", click: () => window.show() },
+    { label: "hide", click: () => window.hide() },
+    {
+      label: "close",
+      click: () => {
+        app.isQuiting = true;
+        app.quit();
+      },
+    },
+  ]);
+  tray.setContextMenu(contextMenu);
+
+  tray.on("click", () => window.show());
+
+  return tray;
 };
 
 app.on("window-all-closed", () => {
   app.quit();
 });
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  const windows = createWindow();
+  createTray(windows);
+});
