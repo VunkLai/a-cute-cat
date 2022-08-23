@@ -26,6 +26,8 @@ const createWindow = () => {
     window.loadURL(process.env["VITE_DEV_SERVER_URL"]);
   }
 
+  window.setAlwaysOnTop(true);
+
   return window;
 };
 
@@ -52,10 +54,14 @@ const createTray = (window) => {
 };
 
 app.on("window-all-closed", () => {
-  app.quit();
+  if (process.platform !== "darwin") app.quit();
 });
 
 app.whenReady().then(() => {
-  const windows = createWindow();
-  createTray(windows);
+  const window = createWindow();
+  createTray(window);
+
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
 });
