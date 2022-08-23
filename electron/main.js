@@ -8,12 +8,9 @@ const BASE_PATH = {
 };
 
 const createWindow = () => {
-  console.log("public:", BASE_PATH.public);
-  console.log("dist:", BASE_PATH.dist);
-
   const window = new BrowserWindow({
-    icon: path.join(BASE_PATH.public, "vite.svg"),
-    title: "Astra Endpoint",
+    // icon: path.join(BASE_PATH.public, "vite.svg"),
+    title: "Cat",
   });
 
   if (app.isPackaged) {
